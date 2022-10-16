@@ -195,11 +195,12 @@ class Index extends BaseController
     public function postReport()
     {
         $userInfo = session('userInfo');
-        if( !$userInfo ){
+        if (!$userInfo) {
             return redirect('/');
         }
         return view('postreport', [
-            'title' => '提交报告'
+            'title'    => '提交报告',
+            'userInfo' => $userInfo
         ]);
 
     }
@@ -238,11 +239,48 @@ class Index extends BaseController
      */
     public function reportList()
     {
+        $userInfo = session('userInfo');
+        $reportList = Db::table('report')->where('test_customer_mobile', $userInfo['mobile'])->select();
         return view('reportlist', [
-            'title' => '报告列表'
+            'title'      => '报告列表',
+            'reportList' => $reportList,
         ]);
-
     }
 
+    /**
+     * 申请发票
+     */
+    public function requestInvoice()
+    {
+        $userInfo = session('userInfo');
+        return view('requestnvoice', [
+            'title'    => '申请发票',
+            'userInfo' => $userInfo,
+        ]);
+    }
+
+    /**
+     * 执行申请发票
+     */
+    public function doRequestInvoice()
+    {
+        $userInfo = session('userInfo');
+        if (!$userInfo) {
+            throw new \Exception("请先登陆");
+        }
+        $params = input('post.');
+        $data = [
+            'type'       => $params['type'] ?? 0,
+            'name'       => $params['name'] ?? '',
+            'mobile'     => $params['mobile'] ?? '',
+            'address'    => $params['address'] ?? '',
+            'created_at' => time(),
+        ];
+        $id = Db::name('tmp2')->insertGetId($data);
+        if (!$id) {
+            throw new \Exception("提交失败");
+        }
+        return $this->output(SUCCESS, []);
+    }
 
 }

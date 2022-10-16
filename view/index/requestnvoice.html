@@ -1,0 +1,120 @@
+{include file="common/header" /}
+<body ontouchstart>
+
+<form id="form1" style="margin: 1px">
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cells weui-cells_radio" style="margin-top:-3px">
+            <div class="weui-cells__title" style="color:black;font-size:17px;">发票类型:</div>
+            <label class="weui-cell weui-check__label" for="invoice1">
+                <div class="weui-cell__bd">
+                    <p>电子</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" class="weui-check" name="InvoiceType" id="invoice1" value="1" checked="checked">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+            <label class="weui-cell weui-check__label" for="invoice2">
+                <div class="weui-cell__bd">
+                    <p>纸质</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" name="InvoiceType" class="weui-check" value="0" id="invoice2">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">姓   名:</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="name" class="weui-input" type="text" placeholder="请输入收件人姓名" value="{$userInfo.name}" datacol="yes" err="收件人姓名" checkexpession="WxNull">
+            </div>
+            <div class="weui-cell__ft">
+                <i class="weui-icon-warn"></i>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">手机号码:</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="mobile" class="weui-input" type="tel" placeholder="请输入手机号码" value="{$userInfo.mobile}" datacol="yes" err="手机号码" checkexpession="WxNull">
+            </div>
+            <div class="weui-cell__ft">
+                <i class="weui-icon-warn"></i>
+            </div>
+        </div>
+
+
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">地址/邮件:</label></div>
+            <div class="weui-cell__bd">
+                <input id="address" class="weui-input" type="text" placeholder="请输入收件人/邮箱地址" datacol="yes" err="收件人地址/邮箱地址" checkexpession="WxNull">
+            </div>
+
+            <div class="weui-cell__ft">
+                <i class="weui-icon-warn"></i>
+            </div>
+        </div>
+    </div>
+</form>
+<div id="lodimg" class="weui-loadmore" style="display:none">
+    <i class="weui-loading"></i>
+    <span class="weui-loadmore__tips">正在提交</span>
+</div>
+<div class="weui-btn-area">
+    <a class="weui-btn weui-btn_primary" href="javascript:" onclick="AcceptClick()">提交</a>
+</div>
+<div class="weui-cells__title">服务帮助电话：0591-88886666</div>
+<script>
+
+
+    // 验证手机号
+    function isPhoneNo(phone) {
+        var regExp = new RegExp("^1[34578]\\d{9}$");
+        return regExp.test(phone)
+    }
+    //保存事件
+    function AcceptClick() {
+        if (!CheckDataValid('#form1')) {
+            return false;
+        }
+        var phone = $("#mobile").val();
+        if (!isPhoneNo(phone)) {
+            $.toptip("请输入正确的手机号码", "error");
+            return false
+        }
+        var type = $('input[type="radio"]:checked').val();
+        var data = GetWebControls("#form1");
+        data['type'] = type;
+        $.ajax({
+            type: "POST",
+            dataType:'json',
+            cache: false,
+            data: data,
+            url: "{:Url('Index/doRequestInvoice')}",
+            success: function(result) {
+                if (result != null) {
+                    if (result && result.errcode == 0) {
+                        $.toast("提交成功！", function() {
+                            location.href = "{:url('Index/reportList')}";
+                        });
+                    }else{
+                        $.toptip(result.errmsg, "error");
+                    }
+                }
+            }
+        });
+
+
+
+
+    }
+
+
+</script>
+
+
+{include file="common/footer" /}

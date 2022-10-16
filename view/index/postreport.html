@@ -101,7 +101,7 @@
                 <label class="weui-label">真实姓名:</label>
             </div>
             <div class="weui-cell__bd">
-                <input id="customerName" class="weui-input" type="text" placeholder="请输入真实姓名" datacol="yes" err="真实姓名" checkexpession="WxNull">
+                <input id="customerName" class="weui-input" type="text" value="{$userInfo.name}" disabled placeholder="请输入真实姓名" datacol="yes" err="真实姓名" checkexpession="WxNull">
             </div>
             <div class="weui-cell__ft">
                 <i class="weui-icon-warn"></i>
@@ -143,7 +143,7 @@
                 <label class="weui-label">联系电话:</label>
             </div>
             <div class="weui-cell__bd">
-                <input id="test_customer_mobile" class="weui-input" type="tel" placeholder="请输入联系电话" datacol="yes" err="电话号码" checkexpession="WxNull">
+                <input id="test_customer_mobile" class="weui-input" type="tel" value="{$userInfo.name}" disabled  placeholder="请输入联系电话" datacol="yes" err="电话号码" checkexpession="WxNull">
             </div>
             <div class="weui-cell__ft">
                 <i class="weui-icon-warn"></i>

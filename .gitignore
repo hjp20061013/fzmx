@@ -1,4 +1,6 @@
 /runtime
 /vendor
 /.idea
+.env
+.example.env
 !.gitignore

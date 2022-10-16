@@ -1,10 +1,12 @@
 <?php
-declare (strict_types = 1);
+declare (strict_types=1);
 
 namespace app;
 
 use think\App;
+use think\exception\HttpResponseException;
 use think\exception\ValidateException;
+use think\Response;
 use think\Validate;
 
 /**
@@ -39,11 +41,11 @@ abstract class BaseController
     /**
      * 构造方法
      * @access public
-     * @param  App  $app  应用对象
+     * @param App $app 应用对象
      */
     public function __construct(App $app)
     {
-        $this->app     = $app;
+        $this->app = $app;
         $this->request = $this->app->request;
 
         // 控制器初始化
@@ -52,15 +54,16 @@ abstract class BaseController
 
     // 初始化
     protected function initialize()
-    {}
+    {
+    }
 
     /**
      * 验证数据
      * @access protected
-     * @param  array        $data     数据
-     * @param  string|array $validate 验证器名或者验证规则数组
-     * @param  array        $message  提示信息
-     * @param  bool         $batch    是否批量验证
+     * @param array $data 数据
+     * @param string|array $validate 验证器名或者验证规则数组
+     * @param array $message 提示信息
+     * @param bool $batch 是否批量验证
      * @return array|string|true
      * @throws ValidateException
      */
@@ -75,7 +78,7 @@ abstract class BaseController
                 [$validate, $scene] = explode('.', $validate);
             }
             $class = false !== strpos($validate, '\\') ? $validate : $this->app->parseClass('validate', $validate);
-            $v     = new $class();
+            $v = new $class();
             if (!empty($scene)) {
                 $v->scene($scene);
             }
@@ -91,4 +94,17 @@ abstract class BaseController
         return $v->failException(true)->check($data);
     }
 
+    /*
+     * 返回客户端
+    */
+    public function output($errcode, $data, $hearder = [], $options = [])
+    {
+        $response_data = [
+            'errcode' => $errcode,
+            'data'    => $errcode > 0 ? null : $data,
+            'errmsg'  => $errcode > 0 ? $data : ''
+        ];
+        $response = json($response_data, 200, $hearder, $options);
+        throw new HttpResponseException($response);
+    }
 }

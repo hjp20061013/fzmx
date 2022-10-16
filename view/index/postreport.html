@@ -1,0 +1,255 @@
+{include file="common/header" /}
+<body ontouchstart>
+
+<form id="form1" style="margin: 1px">
+    <div class="weui-cells weui-cells_form">
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">血样编号:</label></div>
+            <div class="weui-cell__bd">
+                <input id="test_no" class="weui-input" type="text" placeholder="请输入血样编号" datacol="yes" err="血样编号" checkexpession="WxNull">
+            </div>
+            <div class="weui-cell__ft">
+                <i class="weui-icon-warn"></i>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">送检单位:</label></div>
+            <div class="weui-cell__bd">
+                <input id="test_company" class="weui-input" type="text" placeholder="请输入送检单位" datacol="yes" err="送检单位" checkexpession="WxNull">
+            </div>
+            <div class="weui-cell__ft">
+                <i class="weui-icon-warn"></i>
+            </div>
+        </div>
+        <div class="weui-cells weui-cells_radio" style="margin-top:-3px">
+            <div class="weui-cells__title" style="color:black;font-size:17px;">送检部门:</div>
+
+            <label class="weui-cell weui-check__label" for="sampleSendType1">
+                <div class="weui-cell__bd">
+                    <p>门诊</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" class="weui-check" name="sampleSendType" id="sampleSendType1" value="1" checked="checked">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+            <label class="weui-cell weui-check__label" for="sampleSendType2">
+                <div class="weui-cell__bd">
+                    <p>住院</p>
+                </div>
+                <div class="weui-cell__ft" >
+                    <input type="radio" name="sampleSendType" class="weui-check" value="0" id="sampleSendType2">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+        </div>
+
+        <div id="xxx" style="display: none;">
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">科室:</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input id="test_dept" class="weui-input" type="text" placeholder="请输入科室" datacol="yes" err="科室">
+                </div>
+                <div class="weui-cell__ft">
+                    <i class="weui-icon-warn"></i>
+                </div>
+            </div>
+
+
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">住院号:</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input id="test_in_no" class="weui-input" type="text" placeholder="请输入住院号" datacol="yes" err="住院号" >
+                </div>
+                <div class="weui-cell__ft">
+                    <i class="weui-icon-warn"></i>
+                </div>
+            </div>
+
+
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">床号:</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input id="test_bed_no" class="weui-input" type="text" placeholder="请输入床号" datacol="yes" err="床号">
+                </div>
+                <div class="weui-cell__ft">
+                    <i class="weui-icon-warn"></i>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">检测类型:</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="test_product_code" class="weui-input" type="text" placeholder="请选择检测类型" datacol="yes" err="检测类型" checkexpession="WxNull">
+            </div>
+            <div class="weui-cell__ft">
+                <i class="weui-icon-warn"></i>
+            </div>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">真实姓名:</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="customerName" class="weui-input" type="text" placeholder="请输入真实姓名" datacol="yes" err="真实姓名" checkexpession="WxNull">
+            </div>
+            <div class="weui-cell__ft">
+                <i class="weui-icon-warn"></i>
+            </div>
+        </div>
+        <div class="weui-cells weui-cells_radio" style="margin-top:-3px">
+            <div class="weui-cells__title" style="color:black;font-size:17px;">性别:</div>
+            <label class="weui-cell weui-check__label" for="sex1">
+                <div class="weui-cell__bd">
+                    <p>男</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" class="weui-check" name="customerGender" id="sex1" value="0" checked="checked">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+            <label class="weui-cell weui-check__label" for="sex2">
+                <div class="weui-cell__bd">
+                    <p>女</p>
+                </div>
+                <div class="weui-cell__ft">
+                    <input type="radio" name="customerGender" class="weui-check" value="1" id="sex2">
+                    <span class="weui-icon-checked"></span>
+                </div>
+            </label>
+        </div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">年龄:</label></div>
+            <div class="weui-cell__bd">
+                <input id="test_customer_age" class="weui-input" type="text" placeholder="请输入年龄" datacol="yes" err="密码" checkexpession="WxNull">
+            </div>
+
+        </div>
+
+
+
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">联系电话:</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input id="test_customer_mobile" class="weui-input" type="tel" placeholder="请输入联系电话" datacol="yes" err="电话号码" checkexpession="WxNull">
+            </div>
+            <div class="weui-cell__ft">
+                <i class="weui-icon-warn"></i>
+            </div>
+        </div>
+
+        <div class="weui-cells__title">您在迈新中心注册的电话号码</div>
+        <div class="weui-cell">
+            <div class="weui-cell__hd"><label class="weui-label">采样日期:</label></div>
+            <div class="weui-cell__bd">
+                <input id="test_blood_draw_time" class="weui-input" type="text" placeholder="请输入采样日期" datacol="yes" err="采样日期" checkexpession="WxNull">
+            </div>
+
+        </div>
+
+    </div>
+</form>
+<div id="lodimg" class="weui-loadmore" style="display:none">
+    <i class="weui-loading"></i>
+    <span class="weui-loadmore__tips">正在提交</span>
+</div>
+<div class="weui-btn-area">
+    <a class="weui-btn weui-btn_primary" href="javascript:" onclick="AcceptClick()">提交信息</a>
+</div>
+<div class="weui-cells__title">咨询服务电话：0591-88886666</div>
+<script>
+    function testDisplay()
+    {
+        var divD = document.getElementById("xxx");
+        if(divD.style.display=="none")
+        {
+            divD.style.display = "block";   /*****可见****/
+        }
+        else
+        {
+            divD.style.display = "none";    /*****不可见****/
+        }
+    }
+    $(function () {
+        $("#test_product_code").select({
+            title: "检测类型",
+            items: [
+                {
+                    title: "精准型",
+                    value: "92",
+                },
+                {
+                    title: "医疗型",
+                    value: "93",
+                },
+
+            ]
+        });
+        //显示密码
+        $("#sampleSendType1").click(function () {
+
+            $("#sampleSendType1").prop("checked","true");
+            $("#sampleSendType1").attr("checked","true");
+            return testDisplay();
+        });
+        $("#sampleSendType2").click(function () {
+
+            $("#sampleSendType2").prop("checked","true");
+            $("#sampleSendType2").attr("checked","true");
+            return testDisplay();
+        });
+    });
+
+
+    // 验证手机号
+    function isPhoneNo(phone) {
+        var regExp = new RegExp("^1[34578]\\d{9}$");
+        return regExp.test(phone)
+    }
+    //保存事件
+    function AcceptClick() {
+        if (!CheckDataValid('#form1')) {
+            return false;
+        }
+        //送检部门
+        var test_type = $('input[type="sampleSendType"]:checked').val();
+        //性别
+        var test_customer_gender = $('input[type="radio"]:checked').val();
+        var data = GetWebControls("#form1");
+        data['test_type'] = test_type;
+        data['test_customer_gender'] = test_customer_gender;
+        $.ajax({
+            type: "POST",
+            dataType:'json',
+            cache: false,
+            data: data,
+            url: "{:Url('Index/doPostReport')}",
+            success: function(result) {
+                if (result != null) {
+                    if (result && result.errcode == 0) {
+                        $.toast("提交成功！", function() {
+                            location.href = "{:url('Index/reportList')}"
+                        });
+                    }else{
+                        $.toptip(result.errmsg, "error");
+                    }
+                }
+            }
+        });
+    }
+
+
+</script>
+{include file="common/footer" /}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html class="pixel-ratio-1"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{$title}</title>
+
+    <link href="../static/index/css/weui.css" rel="stylesheet">
+    <link href="../static/index/css/jquery-weui.min.css" rel="stylesheet">
+    <link href="../static/index/css/demos.css" rel="stylesheet">
+
+    <script src="../static/index/js/jquery-2.1.4.js"></script>
+    <script src="../static/index/js/jquery-weui.min.js"></script>
+    <script src="../static/index/js/jweixin-1.4.0.js"></script>
+    <script src="../static/index/js/common-framework.js"></script>
+    <script src="../static/index/js/fastclick.js"></script>
+    <script src="../static/index/js/common-validator.js"></script>
+
+
+
+    <script>
+        $(function () {
+            IsWxPhone();
+            FastClick.attach(document.body);
+        })
+        //是否微信手机端
+        function IsWxPhone() {
+            //平台、设备和操作系统
+            var system = {
+                win: false,
+                mac: false,
+                xll: false,
+                ipad: false
+            };
+            //检测平台
+            var p = navigator.platform;
+            system.win = p.indexOf("Win") == 0;
+            system.mac = p.indexOf("Mac") == 0;
+            system.x11 = (p == "X11") || (p.indexOf("Linux") == 0);
+            system.ipad = (navigator.userAgent.match(/iPad/i) != null) ? true : false;
+            //为电脑端则提示
+            if (system.win || system.mac || system.xll || system.ipad) {
+                $.alert("暂不支持微信电脑端，请使用微信手机端进行操作。");
+                return false;
+            //为手机端判断是否微信浏览器，不是则提示
+            } else {
+                var ua = navigator.userAgent.toLowerCase();
+                if (ua.match(/MicroMessenger/i) == "micromessenger") {
+                    return true;
+                } else {
+                    $.alert("请在微信客户端中打开!");
+                    return false;
+                }
+            }
+        }
+    </script>
+</head>

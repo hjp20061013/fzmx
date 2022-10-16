@@ -14,6 +14,9 @@ namespace think;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+//加载常量
+require __DIR__ . '/../app/const.php';
+
 // 执行HTTP应用并响应
 $http = (new App())->http;
 

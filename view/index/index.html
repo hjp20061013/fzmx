@@ -2,9 +2,6 @@
 <link href="../static/index/css/bootstrap.min.css" rel="stylesheet">
 <link href="../static/index/css/font-awesome.min.css" rel="stylesheet">
 <link href="../static/index/css/weixin.css" rel="stylesheet">
-<header class="demos-header">
-    <h1 class="demos-title">欢迎你，{$userInfo.name}</h1>
-</header>
 <style type="text/css">
     .form-control {
         border: 1px solid #2f9353;
@@ -12,14 +9,66 @@
     }
 
 </style>
-<body>
-<div style="margin: 35px 25px; background: #fff; border: 1px solid #999; border-radius: 10px; opacity: 0.8; overflow: hidden; padding: 25px 5px;">
-    <div class="col-xs-6">
+
+<header class="demos-header">
+    <h1 class="demos-title">欢迎你，{$userInfo.name}
+        <div style="background: #fff; border-radius: 10px; opacity: 0.8; overflow: hidden; padding: 5px 5px;">
         <a href="{:url('Index/postReport')}" class="btn-success btn form-control" style="margin-top: 10px; height: 35px; background-color: #227654; border-radius: 10px; float:right;" type="button">受检者信息采集</a>
-        <a class="btn-success btn form-control" style="margin-top: 10px; height: 35px; background-color: #227654; border-radius: 10px; float:left;" type="button">报告查询</a>
+        <a href="{:url('Index/logout')}" class="btn-success btn form-control" style="margin-top: 10px; height: 35px; background-color: #227654; border-radius: 10px; float:right;" type="button">退出</a>
+        </div>
+    </h1>
+</header>
 
-    </div>
+<body>
+{if empty($reportList)}
+<div style="margin: 35px 25px; background: #fff; border-radius: 10px; opacity: 0.8; overflow: hidden; padding: 25px 5px;">
+    暂时没有数据
 </div>
+{else /}
+{foreach $reportList as $vo}
+    <div style="margin: 35px 25px; background: #fff; border: 1px solid #999; border-radius: 10px; opacity: 0.8; overflow: hidden; padding: 25px 5px;">
+        <div class="nav nav-tabs">
+            <label class="col-xs-12 control-label" style="color: #006633; font-size: 16px;">
+                血样编号： {$vo.test_no}
+            </label>
+        </div>
+        <div class="nav nav-tabs">
+            <label class="col-xs-12 control-label" style="color: #000000; font-size: 14px;">
+                客户姓名：  {$vo.test_customer_name}
+            </label>
+        </div>
+        <div class="nav nav-tabs">
+            <label class="col-xs-12 control-label" style="color: #000000; font-size: 14px;">
+                手机号码：  {$vo.test_customer_mobile}
+            </label>
+        </div>
 
+        <div class="nav nav-tabs">
+            <label class="col-xs-12 control-label" style="color: #000000; font-size: 14px;">
+                送检单位：  {$vo.test_company}
+            </label>
+        </div>
+        <div class="nav nav-tabs">
+            <label class="col-xs-12 control-label" style="color: #000000; font-size: 14px;">
+                样本接收时间：  {:date('Y-m-d', $vo.created_at)}
+            </label>
+        </div>
+        <div class="nav nav-tabs">
+            <label class="col-xs-12 control-label" style="color: #000000; font-size: 14px;">
+                报告上传时间：   {$vo.test_blood_draw_time}
+            </label>
+        </div>
+        <div class="nav nav-tabs">
+            <label class="col-xs-12 control-label" style="color: #000000; font-size: 14px;">
+                检测进度：  报告已上传
+            </label>
+        </div>
+        <div class="col-xs-6">
+            <a href="{:url('Index/showReport', ['id'=>$vo.id])}" class="btn-success btn form-control" style="margin-top: 10px; height: 35px; background-color: #227654; border-radius: 10px; float:right;" type="button">查看报告</a>
+            <a href="{:url('Index/requestInvoice')}" class="btn-success btn form-control" style="margin-top: 10px; height: 35px; background-color: #227654; border-radius: 10px; float:left;" type="button">申请发票</a>
 
+        </div>
+    </div>
+    {/foreach}
+{/if}
 {include file="common/footer" /}

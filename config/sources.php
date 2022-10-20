@@ -2,17 +2,22 @@
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
-// | Copyright (c) 2006~2018 http://thinkphp.cn All rights reserved.
+// | Copyright (c) 2006~2016 http://thinkphp.cn All rights reserved.
 // +----------------------------------------------------------------------
 // | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-use think\facade\Route;
+use think\facade\Env;
 
-//Route::get('think', function () {
-//    return 'hello,ThinkPHP6!';
-//});
-//
-//Route::get('hello/:name', 'index/hello');
-Route::post('api/testing/sample/receive', 'Api/receive');
+//接口允许来源
+return [
+    '9c3a20b9f0d2' => [
+        'app_key'  => '9c3a20b9f0d2',
+        'sign_key' => 'dd@77#$36^*&8e98*&5c506',
+        'api_url' => 'https://maixin.nanopep.com/'
+    ],
+
+
+];
+ 

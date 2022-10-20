@@ -14,6 +14,8 @@ use think\Validate;
  */
 abstract class BaseController
 {
+    protected $params = [];
+    protected $headerParams = [];
     /**
      * Request实例
      * @var \think\Request
@@ -103,6 +105,20 @@ abstract class BaseController
             'errcode' => $errcode,
             'data'    => $errcode > 0 ? null : $data,
             'errmsg'  => $errcode > 0 ? $data : ''
+        ];
+        $response = json($response_data, 200, $hearder, $options);
+        throw new HttpResponseException($response);
+    }
+
+    /*
+ * 返回客户端
+*/
+    public function apiOutput($errcode, $data, $hearder = [], $options = [])
+    {
+        $response_data = [
+            'code' => $errcode,
+            'data'    => $errcode > 0 ? null : $data,
+            'msg'  => $errcode > 0 ? $data : ''
         ];
         $response = json($response_data, 200, $hearder, $options);
         throw new HttpResponseException($response);

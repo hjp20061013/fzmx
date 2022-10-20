@@ -20,9 +20,11 @@ class Index extends BaseController
     {
         $userInfo = session('userInfo');
         if (!empty($userInfo)) {
+            $reportList = Db::table('fzmx_report')->where('test_customer_mobile', $userInfo['mobile'])->select();
             return view('index', [
                 'title'    => 'index',
                 'userInfo' => $userInfo,
+                'reportList' => $reportList,
             ]);
             //return "欢迎，{$userInfo['name']},<a href='./index/logout.html'>退出</a><br />";
         } else {
@@ -52,7 +54,7 @@ class Index extends BaseController
         if (!$mobile || !$password) {
             $this->output(COMMON_ERROR_TIP, '账号或密码错误!');
         }
-        $userInfo = Db::table('tmp1')->where('mobile', $mobile)->find();
+        $userInfo = Db::table('fzmx_member')->where('mobile', $mobile)->find();
         if (!$userInfo) {
             $this->output(COMMON_ERROR_TIP, '账号不存在!');
         }
@@ -60,7 +62,7 @@ class Index extends BaseController
         if (password_verify($password, $userInfo['password']) === false) {
             $this->output(COMMON_ERROR_TIP, '密码错误!');
         }
-        Db::table('tmp1')->where('id', $userInfo['id'])->update([
+        Db::table('fzmx_member')->where('id', $userInfo['id'])->update([
             'last_login_ip' => $ip,
             'last_login_at' => time(),
         ]);
@@ -117,7 +119,7 @@ class Index extends BaseController
         if (!isset($params['mobile']) || empty($params['mobile'])) {
             $this->output(COMMON_ERROR_TIP, "手机号不能为空");
         }
-        $infoObject = Db::table('tmp1')->where('mobile', $params['mobile']);
+        $infoObject = Db::table('fzmx_member')->where('mobile', $params['mobile']);
         if ($infoObject->count() <= 0) {
             $this->output(COMMON_ERROR_TIP, "手机号不存在");
         }
@@ -166,7 +168,7 @@ class Index extends BaseController
             $this->output(COMMON_ERROR_TIP, "密码不能为空");
         }
         //是否已经存在此用户
-        $has = Db::table('tmp1')->where('mobile', $params['mobile'])->count();
+        $has = Db::table('fzmx_member')->where('mobile', $params['mobile'])->count();
         if ($has > 0) {
             $this->output(COMMON_ERROR_TIP, "此手机已经注册");
         }
@@ -178,13 +180,13 @@ class Index extends BaseController
             'name'       => $params['name'],
             'created_at' => time(),
         ];
-        $uid = Db::name('tmp1')->insertGetId($data);
+        $uid = Db::name('fzmx_member')->insertGetId($data);
         if (!$uid) {
-            throw new \Exception("注册失败");
+            $this->output(COMMON_ERROR_TIP, "注册失败");
         }
         Cache::delete('SMS:VERIFYCODE:' . $params['mobile']);
         //执行登陆
-        $userInfo = Db::table('tmp1')->where('mobile', $params['mobile'])->find();
+        $userInfo = Db::table('fzmx_member')->where('mobile', $params['mobile'])->find();
         session('userInfo', $userInfo);
         return $this->output(SUCCESS, []);
     }
@@ -227,9 +229,9 @@ class Index extends BaseController
             'test_blood_draw_time' => $params['test_blood_draw_time'] ?? '',
             'created_at'           => time(),
         ];
-        $id = Db::name('report')->insertGetId($data);
+        $id = Db::name('fzmx_report')->insertGetId($data);
         if (!$id) {
-            throw new \Exception("提交失败");
+            $this->output(COMMON_ERROR_TIP, "提交失败");
         }
         return $this->output(SUCCESS, []);
     }
@@ -240,7 +242,10 @@ class Index extends BaseController
     public function reportList()
     {
         $userInfo = session('userInfo');
-        $reportList = Db::table('report')->where('test_customer_mobile', $userInfo['mobile'])->select();
+        if( !$userInfo ){
+            return redirect('/');
+        }
+        $reportList = Db::table('fzmx_report')->where('test_customer_mobile', $userInfo['mobile'])->select();
         return view('reportlist', [
             'title'      => '报告列表',
             'reportList' => $reportList,
@@ -266,7 +271,7 @@ class Index extends BaseController
     {
         $userInfo = session('userInfo');
         if (!$userInfo) {
-            throw new \Exception("请先登陆");
+            $this->output(COMMON_ERROR_TIP, "请先登陆");
         }
         $params = input('post.');
         $data = [
@@ -276,11 +281,31 @@ class Index extends BaseController
             'address'    => $params['address'] ?? '',
             'created_at' => time(),
         ];
-        $id = Db::name('tmp2')->insertGetId($data);
+        $id = Db::name('fzmx_invoice')->insertGetId($data);
         if (!$id) {
-            throw new \Exception("提交失败");
+            $this->output(COMMON_ERROR_TIP, "提交失败");
         }
         return $this->output(SUCCESS, []);
     }
+
+    /**
+     * 执行申请发票
+     */
+    public function showReport()
+    {
+        $userInfo = session('userInfo');
+        if (!$userInfo) {
+            return redirect('/');
+        }
+        $id = input('id');
+        $info = Db::name('fzmx_report')->find($id);
+        if( !$info ){
+            $this->output(COMMON_ERROR_TIP, "数据不存在");
+        }
+        $appKey = '7fabf527c2c2488f7bb58cfad350ebb5';
+        $result = apiCall('', []);
+        mtrace($result);
+    }
+
 
 }

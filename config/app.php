@@ -37,6 +37,6 @@ return [
             'aliyun_sign' => 'ccc',
             'aliyun_templateid' => 'ddd',
         ]
-    ]
+    ],
 
 ];

@@ -15,38 +15,31 @@ function mtrace(...$args)
 /**
  * ApiCall
  */
-function apiCall($app_key, $action, $params)
+function apiCall($app_key, $action, $params, $hasVerifyResponseEmpty=true)
 {
-    $sources = config('sources');
-    $url = $sources[$app_key]['api_url']??'';
+    $sourceConfig = config('sources');
+    $url = $sourceConfig[$app_key]['api_url']??'';
     if( empty($url) ){
-        throw new \Exception('appkey不存在');
+        throw new \Exception('appKey不存在');
     }
-
+    $url .= $action;
+    //签名
+    $ts = time();
+    $sign = makeSign($app_key, $ts);
     $header_list = [
         'Content-Type:application/json',
-        'version:' . INNER_API_VERSION,
-        'src:' . SRC_PURCHASE,
-        'token:' . PURCHASE_TOKEN,
-        'trace_id:' . 'PO' . microtime(true) . substr('000000' . bcmod(rand(1, 100000), 100000), -5),
-        'signature:' . $signature,
-        'user-agent:' . $userAgent,
+        'appKey:' . $app_key,
+        'ts:' . time(),
+        'sign:' . $sign
     ];
-    $responseJson = curlPost($url, json_encode($params), $header_list);
-    if (empty($responseJson)) {
-        throw new \App\Exceptions\BussinessException("请求接口失败 Url:" . $url);
-    }
-    $response = json_decode($responseJson, true);
-    if (!is_array($response) || !isset($response['code']) || $response['code'] != \App\Tools\ResponseCode::SUCCESS) {
-        $modelMsg = $response['msg'] ?? ($response['data']['msg'] ?? "");
-        $json = json_encode($params, JSON_UNESCAPED_UNICODE);
-        $msg = "请求服务模块【module:{$module},action:{$action}】失败,失败原因:{$modelMsg},参数:{$json}";
-        if (!env('APP_DEBUG', 'false')) {
-            $msg = $modelMsg;
+    $response = curlPost($url, json_encode($params), $header_list);
+    if ($hasVerifyResponseEmpty) {
+        if( empty($response) ){
+            throw new \Exception("请求接口失败 Url:" . $url);
         }
-        throw new \App\Exceptions\BussinessException($msg);
+        $response = @json_decode($response, true);
     }
-    return $response['data'];
+    return $response;
 }
 
 /**
@@ -78,10 +71,20 @@ if (!function_exists('curlPost')) {
         if (curl_errno($curl)) {
             //echo 'Errno' . curl_error($curl);//捕抓异常
             $json = json_encode($data, JSON_UNESCAPED_UNICODE);
-            writeLog("curlPost错误,url:{$url},请求的参数:{$json}");
             throw new \Exception("请求超时,url:{$url}");
         }
         curl_close($curl); // 关闭CURL会话
         return $tmpInfo;
     }
+
+    function makeSign($app_key, $ts){
+        $sourceConfig = config('sources');
+        if( !isset($sourceConfig[$app_key]) ){
+            throw new \Exception("appKey未定义，签名失败");
+        }
+        $str = "appKey,{$app_key};secretKey,{$sourceConfig[$app_key]['sign_key']};ts,{$ts};";
+        return md5($str);
+    }
+
+
 }

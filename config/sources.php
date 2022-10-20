@@ -15,7 +15,7 @@ return [
     '9c3a20b9f0d2' => [
         'app_key'  => '9c3a20b9f0d2',
         'sign_key' => 'dd@77#$36^*&8e98*&5c506',
-        'api_url' => 'https://maixin.nanopep.com/'
+        'api_url' => 'https://maixin.nanopep.com'
     ],
 
 

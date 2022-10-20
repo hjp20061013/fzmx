@@ -3,11 +3,13 @@
 namespace app\controller;
 
 use app\BaseController;
+use think\Exception;
 use think\facade\Cache;
 use think\facade\Request;
 use think\facade\Session;
 use think\facade\View;
 use think\facade\Db;
+use think\helper\Str;
 use utils\Utils;
 
 class Index extends BaseController
@@ -22,8 +24,8 @@ class Index extends BaseController
         if (!empty($userInfo)) {
             $reportList = Db::table('fzmx_report')->where('test_customer_mobile', $userInfo['mobile'])->select();
             return view('index', [
-                'title'    => 'index',
-                'userInfo' => $userInfo,
+                'title'      => 'index',
+                'userInfo'   => $userInfo,
                 'reportList' => $reportList,
             ]);
             //return "欢迎，{$userInfo['name']},<a href='./index/logout.html'>退出</a><br />";
@@ -229,9 +231,38 @@ class Index extends BaseController
             'test_blood_draw_time' => $params['test_blood_draw_time'] ?? '',
             'created_at'           => time(),
         ];
-        $id = Db::name('fzmx_report')->insertGetId($data);
-        if (!$id) {
-            $this->output(COMMON_ERROR_TIP, "提交失败");
+
+        try {
+            Db::table('fzmx_report')->startTrans();
+            $id = Db::name('fzmx_report')->insertGetId($data);
+            if (!$id) {
+                $this->output(COMMON_ERROR_TIP, "提交失败");
+            }
+            //提交到远程
+            $appKey = env('source.appKey', '9c3a20b9f0d2');
+            $params = [
+                'testingNo'         => $data['test_no'],
+                'sampleSendCompany' => $data['test_company'],
+                'sampleSendDept'    => $data['test_dept'],
+                'inNo'              => $data['test_in_no'],
+                'bedNo'             => $data['test_bed_no'],
+                'productCode'       => $data['test_product_code'],
+                'customerName'      => $data['test_customer_name'],
+                'customerGender'    => $data['test_customer_gender'],
+                'customerMobile'    => $data['test_customer_mobile'],
+                'customerAge'       => $data['test_customer_age'],
+                'bloodDrawTime'     => $data['test_blood_draw_time'],
+            ];
+            $result = apiCall($appKey, '/wxp/api/testing/sample/receive', $params);
+            if( !$result || !isset($result['code']) ){
+                throw new \Exception('提交失败');
+            }
+            if( $result['code'] > 0 ){
+                throw new \Exception($result['msg']);
+            }
+        } catch (\Exception $e) {
+            Db::table('fzmx_report')->rollback();
+            $this->output(COMMON_ERROR_TIP, $e->getMessage());
         }
         return $this->output(SUCCESS, []);
     }
@@ -242,7 +273,7 @@ class Index extends BaseController
     public function reportList()
     {
         $userInfo = session('userInfo');
-        if( !$userInfo ){
+        if (!$userInfo) {
             return redirect('/');
         }
         $reportList = Db::table('fzmx_report')->where('test_customer_mobile', $userInfo['mobile'])->select();
@@ -299,12 +330,24 @@ class Index extends BaseController
         }
         $id = input('id');
         $info = Db::name('fzmx_report')->find($id);
-        if( !$info ){
+        if (!$info) {
             $this->output(COMMON_ERROR_TIP, "数据不存在");
         }
-        $appKey = '7fabf527c2c2488f7bb58cfad350ebb5';
-        $result = apiCall('', []);
-        mtrace($result);
+        $appKey = env('source.appKey', '9c3a20b9f0d2');
+        $params = ['testingNo' => $info['test_no']];
+        try {
+            $result = apiCall($appKey, '/wxp/api/testing/report', $params, false);
+            if (Str::length($result) < 100) {
+                throw new \Exception('报告还未生成');
+            }
+        } catch (\Exception $e) {
+            $this->output(COMMON_ERROR_TIP, "操作失败，{$e->getMessage()}");
+        }
+        $path = public_path('download/') . $info['test_no'] . ".pdf";
+        $fp = fopen($path, 'w');
+        fwrite($fp, $result);
+        fclose($fp);
+        return download($path, $info['test_no'] . "检测报告.pdf");
     }
 
 

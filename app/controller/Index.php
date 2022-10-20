@@ -252,6 +252,7 @@ class Index extends BaseController
                 'customerMobile'    => $data['test_customer_mobile'],
                 'customerAge'       => $data['test_customer_age'],
                 'bloodDrawTime'     => $data['test_blood_draw_time'],
+                'sampleSendSource'  => $appKey,
             ];
             $result = apiCall($appKey, '/wxp/api/testing/sample/receive', $params);
             if( !$result || !isset($result['code']) ){

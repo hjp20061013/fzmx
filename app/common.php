@@ -33,6 +33,7 @@ function apiCall($app_key, $action, $params, $hasVerifyResponseEmpty=true)
         'sign:' . $sign
     ];
     $response = curlPost($url, json_encode($params), $header_list);
+    //mtrace(['url'=>$url, 'data'=>$params, 'header'=>$header_list,'返回'=>$response]);
     if ($hasVerifyResponseEmpty) {
         if( empty($response) ){
             throw new \Exception("请求接口失败 Url:" . $url);

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="../static/admin/css/font.css">
+    <link rel="stylesheet" href="../static/admin/css/xadmin.css">
+    <script type="text/javascript" src="../static/admin/js/jquery.min.js"></script>
+</head>
+<body>
+<div class="x-body">
+    <blockquote class="layui-elem-quote">欢迎你 {$adminInfo['username']} 。</blockquote>
+    <fieldset class="layui-elem-field">
+        <legend>信息统计</legend>
+        <div class="layui-field-box">
+            <!--<table class="layui-table" lay-even>-->
+                <!--<thead>-->
+                <!--<tr>-->
+                    <!--<th>统计</th>-->
+                    <!--<th>资讯库</th>-->
+                    <!--<th>图片库</th>-->
+                    <!--<th>产品库</th>-->
+                    <!--<th>用户</th>-->
+                    <!--<th>管理员</th>-->
+                <!--</tr>-->
+                <!--</thead>-->
+                <!--<tbody>-->
+                <!--<tr>-->
+                    <!--<td>总数</td>-->
+                    <!--<td>92</td>-->
+                    <!--<td>9</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>8</td>-->
+                    <!--<td>20</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<td>今日</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<td>昨日</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<td>本周</td>-->
+                    <!--<td>2</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<td>本月</td>-->
+                    <!--<td>2</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                    <!--<td>0</td>-->
+                <!--</tr>-->
+                <!--</tbody>-->
+            <!--</table>-->
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th colspan="2" scope="col">服务器信息</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th width="30%">php版本</th>
+                    <td><span>{:PHP_VERSION}</span></td>
+                </tr>
+                <tr>
+                    <th width="30%">服务器操作系统</th>
+                    <td>{:PHP_OS}</td>
+                </tr>
+                <tr>
+                    <td>web服务器 </td>
+                    <td>{:$_SERVER['SERVER_SOFTWARE']}</td>
+                </tr>
+                <tr>
+                    <td>服务器端口 </td>
+                    <td>{:$_SERVER['SERVER_PORT']}</td>
+                </tr>
+                <tr>
+                    <td>服务器IP地址</td>
+                    <td>{:$_SERVER['SERVER_ADDR']}</td>
+                </tr>
+                <tr>
+                    <td>服务器域名</td>
+                    <td>{:$_SERVER['SERVER_NAME']}</td>
+                </tr>
+                <tr>
+                    <td>服务器当前时间 </td>
+                    <td>{:date('Y-m-d H:i:s', time())}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+</div>
+<script>
+
+//    var ws = {};
+//    $(function () {
+//        var wsServer = "wss://ws.16888yx.com:8888";
+//
+//        // WebSocket
+//        if (window.WebSocket || window.MozWebSocket){
+//            ws = new WebSocket(wsServer);
+//        }else{
+//            console.log('comet...');
+//            ws = new Comet(wsServer);
+//        }
+//
+//        ws.onopen = function(){
+//            console.log("socket连接已打开");
+//
+//            ws.send("uid_1");
+//        };
+//        ws.onmessage = function(e){
+//            console.log("message:" + e.data);
+//        };
+//        ws.onclose = function(){
+//            console.log("socket连接已断开");
+//        };
+//        ws.onerror = function(e){
+//            console.log("ERROR:" + e.data);
+//        };
+//
+//        //离开页面时关闭连接
+//        $(window).bind('beforeunload',function(){
+//            ws.close();
+//        });
+//    });
+
+//var ws = {};
+//    $(function () {
+//        var wsServer = "ws://127.0.0.1:8080";
+//
+//        // WebSocket
+//        if (window.WebSocket || window.MozWebSocket){
+//            ws = new WebSocket(wsServer);
+//        }else{
+//            console.log('comet...');
+//            ws = new Comet(wsServer);
+//        }
+//
+//        ws.onopen = function(){
+//            console.log("socket连接已打开");
+//
+//        };
+//        ws.onmessage = function(e){
+//            console.log("message:" + e.data);
+//        };
+//        ws.onclose = function(){
+//            console.log("socket连接已断开");
+//        };
+//        ws.onerror = function(e){
+//            console.log("ERROR:" + e.data);
+//        };
+//
+//        //离开页面时关闭连接
+//        $(window).bind('beforeunload',function(){
+//            ws.close();
+//        });
+//    });
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

@@ -1,12 +1,14 @@
 <?php
 namespace app;
 
+use app\exception\UnauthorizedException;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\ModelNotFoundException;
 use think\exception\Handle;
 use think\exception\HttpException;
 use think\exception\HttpResponseException;
 use think\exception\ValidateException;
+use think\facade\Request;
 use think\Response;
 use Throwable;
 
@@ -51,8 +53,16 @@ class ExceptionHandle extends Handle
     public function render($request, Throwable $e): Response
     {
         // 添加自定义异常处理机制
+        if( $e instanceof UnauthorizedException ){//未登录或没有权限
+            if( Request::isAjax() ){
+                return response($e->getMessage(), $e->getCode());
+            }else{
+                return redirect('/admin/login.html');
+            }
+        }else{
+            // 其他错误交给系统处理
+            return parent::render($request, $e);
+        }
 
-        // 其他错误交给系统处理
-        return parent::render($request, $e);
     }
 }

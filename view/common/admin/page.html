@@ -1,0 +1,32 @@
+{if $total_count > 0}
+<div id="page"></div>
+<script>
+    //分页
+    layui.use(['laypage', 'layer'], function(){
+        var laypage = layui.laypage;
+            layer  = layui.layer;
+        laypage.render({
+            elem: 'page',
+            curr: "{$page}",
+            count: "{$total_count}",
+            limit: "{$page_size}",
+            limits:[10,20,40,80,100,200],
+            layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+            jump: function(obj, first){
+                if(first){
+                    return false;
+                }
+                url = url_page_format(obj.curr, obj.limit);
+                location.href = url;
+            }
+        });
+    });
+
+    //分页参数格式化
+    function url_page_format(page, limits) {
+        url = "{$page_url}";
+        return String(url).replace('__page__', page).replace('__limits__', limits);
+    }
+
+</script>
+{/if}

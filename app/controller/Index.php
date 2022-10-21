@@ -22,7 +22,10 @@ class Index extends BaseController
     {
         $userInfo = session('userInfo');
         if (!empty($userInfo)) {
-            $reportList = Db::table('fzmx_report')->where('test_customer_mobile', $userInfo['mobile'])->select();
+            $reportList = Db::table('fzmx_report')
+                ->where('test_customer_mobile', $userInfo['mobile'])
+                ->order('id','desc')
+                ->select();
             return view('index', [
                 'title'      => 'index',
                 'userInfo'   => $userInfo,
@@ -215,7 +218,9 @@ class Index extends BaseController
     public function doPostReport()
     {
         $params = input('post.');
-        //注册
+        //检测类型 92=医疗型，93=精准型
+        $testProductCode = $params['test_product_code'] == '医疗型' ? 92 : 93;
+        //
         $data = [
             'test_no'              => $params['test_no'] ?? '',
             'test_company'         => $params['test_company'] ?? '',
@@ -223,7 +228,7 @@ class Index extends BaseController
             'test_dept'            => $params['test_dept'] ?? '',
             'test_in_no'           => $params['test_in_no'] ?? '',
             'test_bed_no'          => $params['test_bed_no'] ?? '',
-            'test_product_code'    => $params['test_product_code'] ?? '',
+            'test_product_code'    =>  $testProductCode,
             'test_customer_name'   => $params['test_customer_name'] ?? '',
             'test_customer_gender' => $params['test_customer_gender'] ?? '',
             'test_customer_age'    => $params['test_customer_age'] ?? '',
@@ -234,7 +239,7 @@ class Index extends BaseController
 
         try {
             Db::table('fzmx_report')->startTrans();
-            $id = Db::name('fzmx_report')->insertGetId($data);
+            $id = Db::table('fzmx_report')->insertGetId($data);
             if (!$id) {
                 $this->output(COMMON_ERROR_TIP, "提交失败");
             }
@@ -261,6 +266,7 @@ class Index extends BaseController
             if( $result['code'] > 0 ){
                 throw new \Exception($result['msg']);
             }
+            Db::table('fzmx_report')->commit();
         } catch (\Exception $e) {
             Db::table('fzmx_report')->rollback();
             $this->output(COMMON_ERROR_TIP, $e->getMessage());
@@ -321,7 +327,7 @@ class Index extends BaseController
     }
 
     /**
-     * 执行申请发票
+     * 查看报告
      */
     public function showReport()
     {

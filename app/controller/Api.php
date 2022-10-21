@@ -43,7 +43,7 @@ class Api extends BaseController
         //验证签名
         $checkSign = makeSign($this->headerParams['appkey'], $this->headerParams['ts']);
         if ($checkSign != $this->headerParams['sign']) {
-            $this->apiOutput(DATA_ERROR, '签名失败 code:002【str=\'' . $str . '\', sign=\'' . $checkSign . '\'】');
+            $this->apiOutput(DATA_ERROR, '签名失败 code:002【sign=\'' . $checkSign . '\'】');
         }
         unset($this->headerParams['sign'], $this->headerParams['ts']);
     }

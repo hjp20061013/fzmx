@@ -240,7 +240,7 @@
                 if (result != null) {
                     if (result && result.errcode == 0) {
                         $.toast("提交成功！", function() {
-                            location.href = "{:url('Index/reportList')}"
+                            location.href = "/"
                         });
                     }else{
                         $.toptip(result.errmsg, "error");

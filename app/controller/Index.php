@@ -220,6 +220,9 @@ class Index extends BaseController
         $params = input('post.');
         //检测类型 92=医疗型，93=精准型
         $testProductCode = $params['test_product_code'] == '医疗型' ? 92 : 93;
+        //采样日期
+        $testBloodDrawTime = @strtotime($params['test_blood_draw_time']);
+        $testBloodDrawTime = date('Y-m-d H:i:s', $testBloodDrawTime);
         //
         $data = [
             'test_no'              => $params['test_no'] ?? '',
@@ -233,7 +236,7 @@ class Index extends BaseController
             'test_customer_gender' => $params['test_customer_gender'] ?? '',
             'test_customer_age'    => $params['test_customer_age'] ?? '',
             'test_customer_mobile' => $params['test_customer_mobile'] ?? '',
-            'test_blood_draw_time' => $params['test_blood_draw_time'] ?? '',
+            'test_blood_draw_time' => $testBloodDrawTime,
             'created_at'           => time(),
         ];
 

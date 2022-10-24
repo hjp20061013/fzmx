@@ -3,6 +3,7 @@
 namespace app\controller;
 
 use app\BaseController;
+use app\exception\UnauthorizedException;
 use think\Exception;
 use think\facade\Cache;
 use think\facade\Request;
@@ -27,7 +28,7 @@ class Index extends BaseController
                 ->order('id','desc')
                 ->select();
             return view('index', [
-                'title'      => 'index',
+                'title'      => '报告列表',
                 'userInfo'   => $userInfo,
                 'reportList' => $reportList,
             ]);
@@ -260,7 +261,7 @@ class Index extends BaseController
                 'customerMobile'    => $data['test_customer_mobile'],
                 'customerAge'       => $data['test_customer_age'],
                 'bloodDrawTime'     => $data['test_blood_draw_time'],
-                'sampleSendSource'  => $appKey,
+                'sampleSendSource'  => $data['test_type'],
             ];
             $result = apiCall($appKey, '/wxp/api/testing/sample/receive', $params);
             if( !$result || !isset($result['code']) ){
@@ -336,7 +337,7 @@ class Index extends BaseController
     {
         $userInfo = session('userInfo');
         if (!$userInfo) {
-            return redirect('/');
+            throw new UnauthorizedException('未登陆或没有权限');
         }
         $id = input('id');
         $info = Db::name('fzmx_report')->find($id);
@@ -348,7 +349,7 @@ class Index extends BaseController
         try {
             $result = apiCall($appKey, '/wxp/api/testing/report', $params, false);
             if (Str::length($result) < 100) {
-                throw new \Exception('报告还未生成');
+                throw new \Exception($result);
             }
         } catch (\Exception $e) {
             $this->output(COMMON_ERROR_TIP, "操作失败，{$e->getMessage()}");
@@ -357,8 +358,22 @@ class Index extends BaseController
         $fp = fopen($path, 'w');
         fwrite($fp, $result);
         fclose($fp);
-        return download($path, $info['test_no'] . "检测报告.pdf");
+        if( !file_exists($path) ){
+            $this->output(COMMON_ERROR_TIP, "操作失败}");
+        }
+        $this->output(SUCCESS, [
+            'test_no' => $info['test_no'],
+            'url' => url('Index/downloadReport', ['test_no' => $info['test_no']])->build(),
+        ]);
     }
 
-
+    /**
+     * 查看报告
+     */
+    public function downloadReport()
+    {
+        $test_no = input('test_no');
+        $path = public_path('download/') . $test_no . ".pdf";
+        return download($path, $test_no . "检测报告.pdf");
+    }
 }

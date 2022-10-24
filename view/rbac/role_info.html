@@ -1,0 +1,113 @@
+{include file="common/admin/header" /}
+<div class="x-body">
+    <form name="form1" id="form1"  action="" method="post" class="layui-form layui-form-pane">
+        <input type="hidden" name="role_id" value="{:isset($role_info['id'])?$role_info['id']:0}"/>
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label">
+                <span class="x-red">*</span>角色名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="name" name="name" value="{:isset($role_info['name'])?$role_info['name']:''}" required="" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">
+                拥有权限
+            </label>
+            <table  class="layui-table layui-input-block">
+                <tbody>
+                {foreach $node_list as $nodes}
+                <tr>
+                    <th>
+                        {$nodes['title']}
+                        <input name="node_id[]" type="checkbox" value="{$nodes['id']}" lay-filter="check_all" {if isset($auth_list[$nodes['id']])&&!empty($auth_list[$nodes['id']])} checked {/if}>
+                    </th>
+                    <td>
+                        <div class="layui-input-block">
+                            {if isset($nodes['sub_nodes'])}
+                            {foreach $nodes['sub_nodes'] as $usb_nodes}
+                            <input name="node_id[]" type="checkbox" class="authority" value="{$usb_nodes['id']}" lay-filter="authority" {if isset($auth_list[$usb_nodes['id']])&&!empty($auth_list[$usb_nodes['id']])} checked {/if}> {$usb_nodes['title']}
+                            {/foreach}
+                            {/if}
+                        </div>
+                    </td>
+                </tr>
+                {/foreach}
+                </tbody>
+            </table>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label for="remark" class="layui-form-label">
+                描述v
+            </label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" id="remark" name="remark" class="layui-textarea">{:isset($role_info['remark'])?$role_info['remark']:''}</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            {if isset($role_info['id'])}
+                <button class="layui-btn" lay-submit="" lay-filter="addupdate">修改</button>
+            {else /}
+                <button class="layui-btn" lay-submit="" lay-filter="addupdate">增加</button>
+            {/if}
+
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form
+        var layer = layui.layer;
+
+        // 实现 全选 反选
+        form.on('checkbox(check_all)',function(data){
+            $(this).parent().siblings("td").find("input").prop("checked",this.checked);
+            form.render('checkbox');
+        });
+        //1 当子项全部选中时,全选被选中 2 当子项未全部选中时,全选不选中
+        form.on('checkbox(authority)',function(data){
+            if(this.checked){
+                //当子项全部选中时,全选被选中
+                if($(this).parent().children().filter(".authority").not("input:checked").length === 0){
+                    $(this).parent().parent().siblings("th").children('input').prop("checked",true);
+                    form.render('checkbox');
+                }
+            } else {
+                // 子项未选中 全选不选中
+                $(this).parent().parent().siblings("th").children('input').prop("checked",false);
+                form.render('checkbox');
+            }
+        })
+
+        //监听提交
+        form.on('submit(addupdate)', function(data){
+            $.ajax({
+                type: "POST",
+                dataType:'json',
+                cache: false,
+                data: $("#form1").serialize(),
+                url: "{:Url('Rbac/doInsertUpdateRole')}",
+                success: function(result) {
+                    if (result != null) {
+                        if (result && result.errcode == 0) {
+                            layer.alert("操作成功", {icon: 6},function () {
+                                // 获得frame索引
+                                var index = parent.layer.getFrameIndex(window.name);
+                                //关闭当前frame
+                                parent.layer.close(index);
+                                //刷新页面
+                                parent.refreshIframe();
+                            });
+                        }else{
+                            layer.msg(result.errmsg);
+                        }
+                    }
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

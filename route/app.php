@@ -16,3 +16,4 @@ use think\facade\Route;
 //
 //Route::get('hello/:name', 'index/hello');
 Route::post('api/testing/sample/receive', 'Api/receive');
+Route::post('api/testing/sample/receive_update', 'Api/receiveUpdate');

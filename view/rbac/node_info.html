@@ -1,0 +1,105 @@
+{include file="common/admin/header" /}
+<div class="x-body">
+    <form class="layui-form" id="form1" name="form1" onsubmit="return false">
+        <input type="hidden" name="pid" value="{$pid}" />
+        <input type="hidden" name="id" value="{:isset($node_info['id'])?$node_info['id']:''}" />
+        <div class="layui-form-item">
+            <label for="title" class="layui-form-label">
+                <span class="x-red">*</span>节点名称
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="title" name="title" required="" lay-verify="required"
+                       autocomplete="off" value="{:isset($node_info['title'])?$node_info['title']:''}" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="iconfont" class="layui-form-label">
+                <span class="x-red">*</span>图标
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" value="{:isset($node_info['iconfont'])?htmlentities($node_info['iconfont']):''}" id="iconfont" name="iconfont"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="iconfont" class="layui-form-label">
+                <span class="x-red">*</span>模块
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" value="{:isset($node_info['module'])?$node_info['module']:''}" id="module" name="module"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>默认: admin模块
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="code" class="layui-form-label">
+                <span class="x-red">*</span>权限码
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" value="{:isset($node_info['code'])?$node_info['code']:''}" id="code" name="code" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>例子: rbac.*、rbac.role
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="sort" class="layui-form-label">
+                <span class="x-red">*</span>排序
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="sort" name="sort" value="{:isset($node_info['sort'])?$node_info['sort']:0}"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>排序数值越大,排越前面
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">是否显示</label>
+                <div class="layui-input-inline">
+                    <select name="show" lay-verify="required">
+                        <option value="0" {if isset($node_info['show']) && ($node_info['show'] == 0)} selected="selected" {/if}>屏蔽</option>
+                        <option value="1" {if isset($node_info['show']) && ($node_info['show'] == 1)} selected="selected" {/if}>显示</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            {if isset($node_info)}
+            <button  class="layui-btn" lay-filter="add" lay-submit="">修改</button>
+            {else/}
+            <button  class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+            {/if}
+        </div>
+    </form>
+</div>
+<script>
+    //监听提交
+    $('.layui-btn').click(function(){
+        $.ajax({
+            type: "POST",
+            dataType:'json',
+            cache: false,
+            data: $("#form1").serialize(),
+            url: "{:Url('Rbac/doNodeInfo')}",
+            success: function(result) {
+                if (result != null) {console.log(result);
+                    if (result && result.errcode == 0) {
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                        parent.layer.msg("操作成功", {time:1000});
+                        //刷新页面
+                        parent.refreshIframe("{:Url('Rbac/node', ['pid'=>$pid])}");
+                    }else{
+                        parent.layer.msg(result.errmsg);
+                    }
+                }
+            }
+        });
+    });
+</script>

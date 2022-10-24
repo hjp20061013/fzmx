@@ -1,0 +1,95 @@
+{include file="common/admin/header" /}
+<div class="x-body">
+    <form class="layui-form" action="" method="post">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名称</label>
+            <div class="layui-input-inline">
+                <input name="username" lay-verify="username" autocomplete="off"  disabled value="{$adminInfo.username}" class="layui-input" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">真实姓名</label>
+            <div class="layui-input-inline">
+                <input type="text" name="realname" lay-verify="realname" autocomplete="off" value="{$adminInfo.realname}" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机</label>
+            <div class="layui-input-inline">
+                <input name="telphone" lay-verify="telphone"  value="{$adminInfo.telphone}" class="layui-input" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">原始密码</label>
+            <div class="layui-input-inline">
+                <input name="orgin_passwd" lay-verify="orgin_passwd" class="layui-input" type="password">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新密码</label>
+            <div class="layui-input-inline">
+                <input name="new_passwd" lay-verify="new_passwd" class="layui-input" type="password">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">确认密码</label>
+            <div class="layui-input-inline">
+                <input name="comfirm_passwd" lay-verify="comfirm_passwd"  class="layui-input" type="password">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">最后登录时间</label>
+            <div class="layui-input-inline">
+                <input name="create_ip" lay-verify="last_login_time" disabled value="{$adminInfo.last_login_time|date='Y-m-d H:i:s'}" class="layui-input" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">创建时间</label>
+            <div class="layui-input-inline">
+                <input name="create_ip" lay-verify="create_date" disabled value="{$adminInfo.created_at|date='Y-m-d H:i:s'}" class="layui-input" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="add-edit">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form','layer'], function(){
+        $ = layui.jquery;
+        var form = layui.form
+            ,layer = layui.layer;
+
+        //监听提交
+        form.on('submit(add-edit)', function(data){
+            var url = "{:Url('Admin/userInfo')}";
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: url,
+                data: data.field,
+                success : function(obj){
+                    if(obj.errcode == 0){
+                        parent.layer.alert("操作成功", {icon: 6},function (index) {
+                            parent.layer.closeAll();
+//                            parent.layer.close(index);
+//                            var indexs = parent.layer.getFrameIndex(window.name);
+//                            //关闭当前frame
+//                            parent.layer.close(indexs);
+//                            //刷新页面
+//                            parent.refreshIframe();
+                        });
+                    } else {
+                        parent.layer.msg(obj.errmsg);
+                    }
+                },
+                error : function(XMLHttpRequest, textStatus, errorThrown) {
+                    parent.layer.msg(XMLHttpRequest.status + "," + textStatus + "," + errorThrown);
+                }
+            });
+            return false;
+        });
+    });
+</script>

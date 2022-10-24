@@ -1,0 +1,104 @@
+{include file="common/admin/header" /}
+<div class="x-nav">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <span class="layui-breadcrumb">
+                <a href="javascript:top.location.reload();"><cite style="cursor: pointer;">首页</cite></a>
+                <a><cite>后台管理员</cite></a>
+            </span>
+        </div>
+        <div class="layui-col-md1">
+            <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新">
+                <i class="layui-icon">ဂ</i></a>
+        </div>
+    </div>
+</div>
+<div class="x-body">
+    <xblock>
+        <button class="layui-btn layui-btn-xs" onclick="location.href='{:Url(\'Rbac/userInfo\')}'"><i class="layui-icon"></i>添加</button>
+    </xblock>
+    <table class="layui-table" lay-size="sm">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>用户名</th>
+            <th>真实姓名</th>
+            <th>角色名</th>
+            <th>状态</th>
+            <th>最后登录IP</th>
+            <th>最后登录时间</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {foreach user_list as $key=>$user}
+            <tr>
+                <td>{:intval(($page-1)*$page_size+$key+1)}</td>
+                <td>{$user['username']}</td>
+                <td>{$user['realname']}</td>
+                <td>{$user['name']}</td>
+                <td class="td-status">
+                    {if $user['status'] == 1}
+                        <span class="layui-btn layui-btn-normal layui-btn-xs">已启用</span>
+                    {else /}
+                        <span class="layui-btn layui-btn-danger layui-btn-xs">已禁用</span>
+                    {/if}
+                </td>
+                <td>{$user['last_login_ip']}</td>
+                <td>{:date('Y-m-d', $user['last_login_time'])}</td>
+                <td class="td-manage">
+                    <a title="详情" class="layui-btn layui-btn-xs" href="{:Url('Rbac/userInfo', ['id'=>$user['id']])}">
+                        <i class="layui-icon">&#xe615;</i>查看
+                    </a>
+                    <a title="删除" class="layui-btn layui-btn-danger layui-btn-xs" onclick="member_del(this,{$user['id']})" href="javascript:;">
+                        <i class="layui-icon">&#xe640;</i>删除
+                    </a>
+                </td>
+            </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    {include file="common/admin/page" /}
+</div>
+<script>
+    /*初始化时间空间*/
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end' //指定元素
+        });
+    });
+
+    /*用户-删除*/
+    function member_del(obj,id){
+        parent.layer.confirm('此操作无法恢复, 确认要删除吗？',function(index){
+            parent.layer.close(index);
+            $.ajax({
+                type: "POST",
+                dataType:'json',
+                cache: false,
+                data: {'user_id':id},
+                url: "{:Url('Rbac/delUser')}",
+                success: function(result) {
+                    if (result != null) {
+                        if (result && result.errcode == 0) {
+                            parent.layer.msg('已删除!',{icon:1,time:1000});
+                            $(obj).parents("tr").remove();
+
+                        }else{
+                            layer.msg(result.errmsg);
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+
+</script>

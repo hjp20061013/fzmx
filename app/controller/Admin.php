@@ -75,4 +75,75 @@ class Admin extends AdminBase
         Session::set('adminInfo', $sData);
         return $this->output(0, '登陆成功!');
     }
+
+    /**
+     * 登陆用户信息
+     */
+    public function userInfo()
+    {
+        $adminInfo = $this->adminAuthInfo();
+        $adminInfo = Db::table('base_user')->where('id', $adminInfo['id'])->find();
+        if( Request::isPost() ){
+            $realname       = input('post.realname');
+            $telphone       = input('post.telphone');
+            $orgin_passwd   = input('post.orgin_passwd');
+            $new_passwd     = input('post.new_passwd');
+            $comfirm_passwd = input('post.comfirm_passwd');
+            $update_data = [];
+            //修改真实姓名
+            if( !empty($realname) && $realname != $adminInfo['realname'] ){
+                $update_data['realname'] = $realname;
+            }
+
+            //修改手机
+            if( !empty($telphone) && $telphone != $adminInfo['telphone'] ){
+                $update_data['telphone'] = $telphone;
+            }
+
+            //密码
+            if(!empty($orgin_passwd) || !empty($new_passwd) || !empty($comfirm_passwd)){
+                if( md5($orgin_passwd.$adminInfo['salt']) != $adminInfo['password'] ){
+                    return $this->output(COMMON_ERROR_TIP, '原始密码错误');
+                }
+
+                if( empty($new_passwd) || $new_passwd != $comfirm_passwd ){
+                    return $this->output(20001, '新密码为空或两次密码不一致');
+                }
+                $salt = mt_rand(1000, 9999);
+                $update_data['salt'] = $salt;
+                $update_data['password'] = md5($new_passwd.$salt);
+            }
+            if( !empty($update_data) ){
+                Db::table('base_user')->where('id', $adminInfo['id'])->update($update_data);
+            }
+            return $this->output(0, $update_data);
+        }else{
+            return view('user_info', [
+                'adminInfo' => $adminInfo
+            ]);
+        }
+    }
+
+    /**
+     * 刷新权限
+     */
+    public function refresh(){
+        $adminInfo = $this->adminAuthInfo();
+        $info = Db::table('base_user')->where('id', $adminInfo['id'])->find();
+        $data = $this->_getAuthList($adminInfo['id']);
+        $sData = json_encode(array_merge($adminInfo, $data));
+        Session::set('adminInfo', $sData);
+        return $this->output(0, []);
+    }
+
+    /**
+     * 登出
+     */
+    public function logOut(){
+        $adminInfo = $this->adminAuthInfo();
+        Session::clear();
+        return redirect('Admin/login');
+    }
+
+
 }

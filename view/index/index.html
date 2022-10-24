@@ -64,11 +64,34 @@
             </label>
         </div>
         <div class="col-xs-6">
-            <a href="{:url('Index/showReport', ['id'=>$vo.id])}" class="btn-success btn form-control" style="margin-top: 10px; height: 35px; background-color: #227654; border-radius: 10px; float:right;" type="button">查看报告</a>
+            <a href="javascript:showReport('{$vo.id}', '{:url(\'Index/showReport\', [\'id\'=>$vo.id])}');" class="btn-success btn form-control" style="margin-top: 10px; height: 35px; background-color: #227654; border-radius: 10px; float:right;" type="button">查看报告</a>
             <a href="{:url('Index/requestInvoice')}" class="btn-success btn form-control" style="margin-top: 10px; height: 35px; background-color: #227654; border-radius: 10px; float:left;" type="button">申请发票</a>
 
         </div>
     </div>
     {/foreach}
 {/if}
+
+<script>
+    function showReport(id, hrefUrl){
+        $.ajax({
+            type: "POST",
+            dataType:'json',
+            cache: false,
+            data: {id:id},
+            url: hrefUrl,
+            success: function(result) {
+                if (result != null) {
+                    if (result && result.errcode == 0) {
+                            location.href = result.data.url;
+                    }else{
+                        $.toptip(result.errmsg, "error");
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+
 {include file="common/footer" /}

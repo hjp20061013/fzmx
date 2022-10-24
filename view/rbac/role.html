@@ -1,0 +1,131 @@
+{include file="common/admin/header" /}
+<div class="x-nav">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <span class="layui-breadcrumb">
+                <a href="javascript:top.location.reload();"><cite style="cursor: pointer;">首页</cite></a>
+                <a><cite>角色管理</cite></a>
+            </span>
+        </div>
+        <div class="layui-col-md1">
+            <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新">
+                <i class="layui-icon">ဂ</i></a>
+        </div>
+    </div>
+</div>
+<div class="x-body">
+    <xblock>
+        <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <button class="layui-btn layui-btn-xs" onclick="parent.x_admin_show('添加','{:Url(\'Rbac/insertUpdateRole\')}')"><i class="layui-icon"></i>添加</button>
+    </xblock>
+    <table class="layui-table" lay-size="sm">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>序号</th>
+            <th>角色名</th>
+            <th>描述</th>
+            <th>状态</th>
+            <th>操作</th>
+        </thead>
+        <tbody>
+        {foreach $role_list as $key=>$role}
+            <tr>
+                <td>
+                    <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id="{$role['id']}"><i class="layui-icon">&#xe605;</i></div>
+                </td>
+                <td>{:intval(($page-1)*$page_size+$key+1)}</td>
+                <td>{$role['name']}</td>
+                <td>{$role['remark']}</td>
+                <td class="td-status">
+                    {if $role['status'] == 1}
+                        <span class="layui-btn layui-btn-normal layui-btn-xs">已启用</span></td>
+                    {else /}
+                        <span class="layui-btn layui-btn-normal layui-btn-xs">已禁用</span></td>
+                    {/if}
+                <td class="td-manage">
+                    <a title="编辑"  class="layui-btn layui-btn-xs" onclick="parent.x_admin_show('编辑','{:Url(\'Rbac/insertUpdateRole\', [\'id\'=>$role[\'id\']])}')" href="javascript:;"><i class="layui-icon">&#xe642;</i>编辑</a>
+                    <a title="删除"  class="layui-btn layui-btn-danger layui-btn-xs" onclick="member_del(this,{$role['id']})" href="javascript:;"><i class="layui-icon">&#xe640;</i>删除</a>
+                </td>
+            </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    {include file="common/admin/page" /}
+</div>
+<script>
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start' //指定元素
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end' //指定元素
+        });
+    });
+
+    /*用户-删除*/
+    function member_del(obj,id){
+        parent.layer.confirm('此操作无法恢复, 确认要删除吗？',function(index){
+            parent.layer.close(index);
+            $.ajax({
+                type: "POST",
+                dataType:'json',
+                cache: false,
+                data: {'role_ids':[id]},
+                url: "{:Url('Rbac/delRole')}",
+                success: function(result) {
+                    if (result != null) {
+                        if (result && result.errcode == 0) {
+                            parent.layer.msg('已删除!',{icon:1,time:1000});
+                            $(obj).parents("tr").remove();
+
+                        }else{
+                            layer.msg(result.errmsg);
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    /*删除所有选择的记录*/
+    function delAll (argument) {
+
+        var data = tableCheck.getData();
+        if( data.length<=0 ){
+            parent.layer.msg('请选择要删除的数据');
+            return false;
+        }
+        parent.layer.confirm('此操作无法恢复, 确认要删除吗？',function(index){
+            parent.layer.close(index);
+            $.ajax({
+                type: "POST",
+                dataType:'json',
+                cache: false,
+                data: {'role_ids':data},
+                url: "{:Url('Rbac/delRole')}",
+                success: function(result) {
+                    if (result != null) {
+                        if (result && result.errcode == 0) {
+                            parent.layer.alert("操作成功", {icon: 6},function (index2) {
+                                //关闭当前frame
+                                parent.layer.close(index2);
+                                //刷新页面
+                                parent.refreshIframe();
+                            });
+                        }else{
+                            layer.msg(result.errmsg);
+                        }
+                    }
+                }
+            });
+        });
+    }
+</script>

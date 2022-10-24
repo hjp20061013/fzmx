@@ -1,0 +1,106 @@
+{include file="common/admin/header" /}
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="javascript:top.location.reload();"><cite style="cursor: pointer;">首页</cite></a>
+        <a href="javascript:history.back(-1);"><cite style="cursor:pointer;">后台管理员</cite></a>
+        <a><cite>管理员详情</cite></a>
+      </span>
+</div>
+<div class="x-body">
+    <form class="layui-form" id="form1" name="form1" onsubmit="return false">
+        <input type="hidden" name="id" value="{:isset($up_user_info['id'])?$up_user_info['id']:''}" />
+        <div class="layui-form-item">
+            <label for="username" class="layui-form-label">
+                <span class="x-red">*</span>用户名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="username" name="username" required="" lay-verify="required"
+                       autocomplete="off" value="{:isset($up_user_info['username'])?$up_user_info['username']:''}" class="layui-input">
+            </div>
+        </div>
+        {if !isset($up_user_info)}
+            <div class="layui-form-item">
+                <label for="passwd" class="layui-form-label">
+                    <span class="x-red">*</span>密码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="passwd" value="" id="passwd" name="passwd"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="passwd_confirm" class="layui-form-label">
+                    <span class="x-red">*</span>确认密码
+                </label>
+                <div class="layui-input-inline">
+                    <input type="passwd" value="" id="passwd_confirm" name="passwd_confirm"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        {/if}
+        <div class="layui-form-item">
+            <label for="realname" class="layui-form-label">
+                <span class="x-red">*</span>真实姓名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" value="{:isset($up_user_info['realname'])?$up_user_info['realname']:''}" id="realname" name="realname"
+                       autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <select name="status" lay-verify="required">
+                        <option value="0" {if isset($up_user_info['status']) && ($up_user_info['status'] == 0)} selected="selected" {/if}>禁用</option>
+                        <option value="1" {if isset($up_user_info['status']) && ($up_user_info['status'] == 1)} selected="selected" {/if}>正常</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">所属权限组</label>
+                <div class="layui-input-inline">
+                    <select name="role_id" lay-verify="required">
+                        {foreach $role_list as $role_info}
+                        <option value="{$role_info['id']}" {if isset($user_role_info['role_id']) && ($user_role_info['role_id'] == $role_info['id'])} selected="selected" {/if}>{$role_info['name']}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            {if isset($up_user_info)}
+            <button  class="layui-btn" lay-filter="add" lay-submit="">修改</button>
+            {else/}
+            <button  class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+            {/if}
+        </div>
+    </form>
+</div>
+
+
+<script>
+    //监听提交
+    $('.layui-btn').click(function(){
+        $.ajax({
+            type: "POST",
+            dataType:'json',
+            cache: false,
+            data: $("#form1").serialize(),
+            url: "{:Url('Rbac/doUserInfo')}",
+            success: function(result) {
+                if (result != null) {
+                    if (result && result.errcode == 0) {
+                        parent.layer.msg("操作成功", {time:1000});
+                        //刷新页面
+                        parent.refreshIframe();
+                    }else{
+                        parent.layer.msg(result.errmsg);
+                    }
+                }
+            }
+        });
+    });
+</script>

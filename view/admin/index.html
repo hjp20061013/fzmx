@@ -39,9 +39,9 @@
         <li class="layui-nav-item">
             <a href="javascript:;">{$adminInfo['username']}</a>
             <dl class="layui-nav-child"> <!-- 二级菜单 -->
-                <dd style="cursor: pointer;"><a onclick="x_admin_show('个人信息','{:Url(\'Index/userInfo\')}', 750, 500)">个人信息</a></dd>
+                <dd style="cursor: pointer;"><a onclick="x_admin_show('个人信息','{:Url(\'Admin/userInfo\')}', 750, 500)">个人信息</a></dd>
                 <dd style="cursor: pointer;"><a onclick="refresh();">刷新权限</a></dd>
-                <dd style="cursor: pointer;"><a href="{:Url('Index/logOut')}">退出</a></dd>
+                <dd style="cursor: pointer;"><a href="{:Url('Admin/logOut')}">退出</a></dd>
             </dl>
         </li>
     </ul>
@@ -87,11 +87,11 @@
             dataType:'json',
             cache: false,
             data: {},
-            url: "{:Url('Index/refresh')}",
+            url: "{:Url('Admin/refresh')}",
             success: function(result) {
                 if (result != null) {
                     if (result && result.errcode == 0) {
-                        location.href = "/admin/index/index"
+                        location.href = "/Admin/index"
                     }else{
                         layer.msg(result.errmsg);
                     }

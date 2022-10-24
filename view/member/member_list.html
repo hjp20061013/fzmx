@@ -1,0 +1,81 @@
+{include file="common/admin/header" /}
+<div class="x-nav">
+    <div class="layui-row">
+        <div class="layui-col-md12">
+            <span class="layui-breadcrumb">
+                <a href="javascript:top.location.reload();"><cite style="cursor: pointer;">首页</cite></a>
+                <a><cite>会员列表</cite></a>
+            </span>
+        </div>
+        <div class="layui-col-md1">
+            <a class="layui-btn layui-btn-sm" href="javascript:location.replace(location.href);" title="刷新">
+                <i class="layui-icon">ဂ</i></a>
+        </div>
+    </div>
+</div>
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 105px;">姓名/手机号</label>
+                <div class="layui-input-inline">
+                    <input name="name" autocomplete="off" value="{:isset($search_query['name']) ? $search_query['name'] : ''}" class="layui-input" type="text">
+                </div>
+                <button class="layui-btn layui-btn-sm"  lay-submit="" lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+            </div>
+        </form>
+    </div>
+    <table class="layui-table" lay-size="sm">
+        <thead>
+        <tr>
+            <th>
+                <div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
+            </th>
+            <th>ID</th>
+            <th>姓名</th>
+            <th>手机</th>
+            <th>性别</th>
+            <th>注册时间</th>
+            <th>用户操作</th>
+        </thead>
+        <tbody>
+        {foreach $member_list as $vo}
+            <tr>
+                <td>
+                    <div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id="{$vo['id']}"><i class="layui-icon">&#xe605;</i></div>
+                </td>
+                <td>{$vo['id']}</td>
+                <td>{$vo['name']}</td>
+                <td>{$vo['mobile']}</td>
+                <td>
+                    {if $vo['gender'] == 0}男{else \}女{/if}
+                </td>
+                <td>{:date('Y-m-d H:i:s', $vo['created_at'])}</td>
+                <td class="td-manage">
+
+                </td>
+            </tr>
+        {/foreach}
+        </tbody>
+    </table>
+    <!--分页-->
+    {include file="common/admin/page" /}
+
+</div>
+<script type="text/javascript">
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#start' //指定元素
+            ,type: 'date'
+        });
+
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#end' //指定元素
+            ,type: 'date'
+        });
+    });
+</script>
